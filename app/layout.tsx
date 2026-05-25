@@ -52,9 +52,9 @@ export const metadata: Metadata = {
     canonical: 'https://sanluismedic.pe',
   },
   icons: {
-    icon: '/Slmlogo.png',
-    shortcut: '/Slmlogo.png',
-    apple: '/Slmlogo.png',
+    icon: '/slmfavicon.webp',
+    shortcut: '/slmfavicon.webp',
+    apple: '/slmfavicon.webp',
   },
 }
 
@@ -75,7 +75,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "MedicalClinic",
               "name": "San Luis Medic",
-              "image": "https://sanluismedic.pe/Slmlogo.png",
+              "image": "https://sanluismedic.pe/Slmlogo.webp",
               "@id": "https://sanluismedic.pe",
               "url": "https://sanluismedic.pe",
               "telephone": "+51016429971",

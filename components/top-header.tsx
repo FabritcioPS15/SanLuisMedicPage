@@ -23,7 +23,7 @@ export function TopHeader() {
 
         <div className="flex justify-center">
           <Image
-            src="/Banner horizonal MTC.png"
+            src="/Banner horizonal MTC.webp"
             alt="MTC Banner"
             width={400}
             height={30}

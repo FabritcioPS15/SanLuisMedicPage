@@ -32,7 +32,7 @@ export default function NotFound() {
       <header className="bg-white border-b border-slate-100 shadow-sm relative z-20">
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
           <Link href="/">
-            <Image src="/Slmlogo.png" alt="San Luis Medic Logo" width={180} height={60} className="h-10 w-auto" />
+            <Image src="/Slmlogo.webp" alt="San Luis Medic Logo" width={180} height={60} className="h-10 w-auto" />
           </Link>
           <Link href="/" className="text-slate-600 hover:text-[#158cca] transition-colors flex items-center gap-2 text-sm font-bold uppercase tracking-wider">
             <Home size={18} />

@@ -181,7 +181,7 @@ function ServiceContent() {
         <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/">
-              <Image src="/Slmlogo.png" alt="San Luis Medic Logo" width={220} height={70} className="h-12 w-auto" priority />
+              <Image src="/Slmlogo.webp" alt="San Luis Medic Logo" width={220} height={70} className="h-12 w-auto" priority />
             </Link>
           </div>
 
@@ -231,7 +231,7 @@ function ServiceContent() {
           <div className="relative w-full h-full flex flex-col">
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between p-6 border-b border-slate-700">
-              <Image src="/Slmlogo.png" alt="San Luis Medic Logo" width={240} height={70} className="h-10 w-auto" priority />
+              <Image src="/Slmlogo.webp" alt="San Luis Medic Logo" width={240} height={70} className="h-10 w-auto" priority />
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-center w-12 h-12 bg-white/10 text-white hover:bg-white/20 transition-colors"
@@ -341,7 +341,7 @@ function ServiceContent() {
       <div className="max-w-7xl mx-auto px-4 py-10 md:py-20 relative">
         {/* MTC Watermark */}
         <div className="pointer-events-none select-none absolute inset-0 flex items-center justify-end opacity-[0.04] overflow-hidden">
-          <Image src="/MTC.png" alt="MTC marca de agua" width={520} height={520} className="object-contain" />
+          <Image src="/MTC.webp" alt="MTC marca de agua" width={520} height={520} className="object-contain" />
         </div>
         <div className="grid lg:grid-cols-2 gap-16 relative z-10">
           {/* Left Column: Requirements and Info */}
@@ -411,7 +411,7 @@ function ServiceContent() {
           <div className="space-y-8">
             <div className="bg-[#0f172a] p-6 md:p-10 text-white relative">
               <div className="absolute -top-10 -right-10 w-64 h-64 opacity-[0.03] pointer-events-none">
-                <Image src="/MTC.png" alt="MTC Watermark" fill className="object-contain" />
+                <Image src="/MTC.webp" alt="MTC Watermark" fill className="object-contain" />
               </div>
               <div className="relative z-10">
                 <h3 className="text-2xl font-black uppercase tracking-tighter mb-6">Agendar mi Examen</h3>
@@ -494,7 +494,7 @@ function ServiceContent() {
             <div className="md:col-span-2 pr-0 md:pr-12">
               <div className="bg-white/5 inline-block p-4 rounded-none mb-8 border border-white/10 relative group">
                 <div className="absolute inset-0 bg-[#158cca]/20 translate-x-2 translate-y-2 -z-10 group-hover:translate-x-1 group-hover:translate-y-1 transition-transform" />
-                <Image src="/Slmlogo.png" alt="San Luis Medic Logo" width={200} height={50} className="h-10 w-auto brightness-0 invert" />
+                <Image src="/Slmlogo.webp" alt="San Luis Medic Logo" width={200} height={50} className="h-10 w-auto brightness-0 invert" />
               </div>
               <p className="text-sm text-slate-400 mb-8 leading-relaxed max-w-md font-medium">
                 Corporación líder en evaluaciones médicas certificadas por el MTC para licencias de conducir. Brindamos confianza, rapidez y seguridad vial a nivel nacional con más de 15 años de experiencia.

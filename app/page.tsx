@@ -12,19 +12,28 @@ import Image from 'next/image'
 import { FaWhatsapp, FaFacebookF, FaInstagram, FaFlask, FaBrain, FaEye, FaStethoscope, FaFileMedical } from 'react-icons/fa'
 import { SiGooglemaps, SiWaze } from 'react-icons/si'
 import dynamic from 'next/dynamic'
-import 'leaflet/dist/leaflet.css'
 import { TopHeader } from '@/components/top-header'
+
+// Lazy load the map section - removes ~200KB of Leaflet from initial bundle
+const MapSection = dynamic(() => import('@/components/map-section'), {
+  ssr: false,
+  loading: () => (
+    <div className="grid lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2 h-[500px] border border-slate-100 shadow-xl bg-slate-100 animate-pulse flex items-center justify-center">
+        <div className="text-slate-400 text-sm font-medium">Cargando mapa...</div>
+      </div>
+      <div className="flex flex-col gap-4">
+        {[1, 2, 3].map(i => <div key={i} className="h-24 bg-slate-100 animate-pulse border border-slate-100" />)}
+      </div>
+    </div>
+  )
+})
 
 export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [counters, setCounters] = useState({ years: 0, clients: 0, branches: 0 })
   const [countersStarted, setCountersStarted] = useState(false)
-  const [selectedSede, setSelectedSede] = useState(0)
-  const mapContainer = useRef<HTMLDivElement>(null)
-  const map = useRef<any>(null)
-  const L = useRef<any>(null)
-  const markersLayer = useRef<any>(null)
   const [isHeaderDropdownOpen, setIsHeaderDropdownOpen] = useState(false)
   const [isHeroDropdownOpen, setIsHeroDropdownOpen] = useState(false)
   const [pricingSede, setPricingSede] = useState(0)
@@ -40,102 +49,6 @@ export default function Home() {
   const getWhatsAppUrl = (message: string, whatsapp: string) => {
     return `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
   };
-
-  const sedesCoords: [number, number][] = [
-    [-11.988863, -77.057482], // Lima Izaguirre (Precise)
-    [-13.651203637235811, -73.36337728787365], // Andahuaylas (Precise)
-    [-13.156021376519789, -74.21794367539681]   // Ayacucho (Jesús Nazareno)
-  ]
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !mapContainer.current) return
-
-    const initMap = async () => {
-      const leaflet = await import('leaflet')
-      L.current = leaflet
-
-      if (map.current) return
-
-      map.current = leaflet.map(mapContainer.current!, {
-        attributionControl: false
-      }).setView(sedesCoords[0], 14)
-
-      leaflet.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '',
-        subdomains: 'abcd',
-        maxZoom: 20
-      }).addTo(map.current)
-
-      markersLayer.current = leaflet.layerGroup().addTo(map.current)
-      updateMarkers()
-    }
-
-    initMap()
-
-    return () => {
-      if (map.current) {
-        map.current.remove()
-        map.current = null
-      }
-    }
-  }, [])
-
-  const updateMarkers = () => {
-    if (!map.current || !L.current || !markersLayer.current) return
-
-    markersLayer.current.clearLayers()
-
-    sedesCoords.forEach((coords, index) => {
-      const isActive = index === selectedSede
-
-      if (isActive) {
-        // Pin Icon with Custom Logo for Active Sede
-        const pinIcon = L.current.divIcon({
-          className: 'custom-pin-marker',
-          html: `<div class="pin-container relative w-[42px] h-[54px]">
-                  <svg width="42" height="54" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute inset-0">
-                    <path d="M12 0C7.58 0 4 3.58 4 8C4 13.54 12 22 12 22C12 22 20 13.54 20 8C20 3.58 16.42 0 12 0Z" fill="#158cca"/>
-                    <circle cx="12" cy="8" r="6" fill="white"/>
-                  </svg>
-                  <div class="absolute top-[4px] left-[10px] w-[22px] h-[22px] flex items-center justify-center overflow-hidden rounded-full">
-                    <img src="/PinSLM.png" class="w-[80%] h-auto object-contain" alt="SLM" />
-                  </div>
-                 </div>`,
-          iconSize: [42, 54],
-          iconAnchor: [21, 54]
-        })
-
-        L.current.marker(coords, { icon: pinIcon })
-          .addTo(markersLayer.current)
-          .bindTooltip(["LIMA", "ANDAHUAYLAS", "AYACUCHO"][index], {
-            permanent: true,
-            direction: 'right',
-            className: 'map-marker-label',
-            offset: [15, -20]
-          })
-      } else {
-        // Standard Marker for Inactive Sedes
-        L.current.circleMarker(coords, {
-          radius: 6,
-          fillColor: "#a3c435",
-          color: "#fff",
-          weight: 1,
-          opacity: 0.5,
-          fillOpacity: 0.4
-        }).addTo(markersLayer.current)
-      }
-    })
-  }
-
-  useEffect(() => {
-    if (map.current) {
-      updateMarkers()
-      map.current.flyTo(sedesCoords[selectedSede], 16, {
-        animate: true,
-        duration: 1.5
-      })
-    }
-  }, [selectedSede])
 
   useEffect(() => {
     setIsLoaded(true)
@@ -236,7 +149,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/">
-              <Image src="/Slmlogo.png" alt="San Luis Medic Logo" width={220} height={70} className="h-12 w-auto" priority />
+              <Image src="/Slmlogo.webp" alt="San Luis Medic Logo" width={220} height={70} className="h-12 w-auto" sizes="220px" priority />
             </Link>
           </div>
 
@@ -244,11 +157,11 @@ export default function Home() {
             {/* Desktop Navigation */}
             <nav className="flex gap-8 text-[13px] font-black text-slate-800 uppercase tracking-wider">
               {[
-                {id: 'inicio', label: 'Inicio', href: '/'},
-                {id: 'nosotros', label: 'Nosotros', href: '/nosotros'},
+                { id: 'inicio', label: 'Inicio', href: '/' },
+                { id: 'nosotros', label: 'Nosotros', href: '/nosotros' },
                 {
-                  id: 'servicios', 
-                  label: 'Servicios', 
+                  id: 'servicios',
+                  label: 'Servicios',
                   href: '/servicios',
                   dropdown: [
                     { label: 'Licencia Particular (A1)', href: '/servicios/licencia-particular' },
@@ -257,40 +170,40 @@ export default function Home() {
                     { label: 'Licencia de Moto (B2C)', href: '/servicios/licencia-moto' }
                   ]
                 },
-                {id: 'sedes', label: 'Sedes', href: '/sedes'}
+                { id: 'sedes', label: 'Sedes', href: '/sedes' }
               ].map((item) => (
-              <div key={item.id} className="relative group/nav">
-                <Link
-                  href={item.href}
-                  className={`relative py-1 transition-colors duration-300 ${activeSection === item.id ? 'text-[#158cca]' : 'hover:text-[#158cca]'}`}
-                >
-                  {item.label}
-                  {activeSection === item.id && (
-                    <motion.div
-                      layoutId="activeNav"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#158cca]"
-                      initial={false}
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </Link>
-                {item.dropdown && (
-                  <div className="absolute top-full left-0 mt-4 w-64 bg-[#0f172a] border border-white/10 shadow-2xl opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 translate-y-2 group-hover/nav:translate-y-0 z-50">
-                    <div className="py-2">
-                      {item.dropdown.map((sub, sIdx) => (
-                        <Link 
-                          key={sIdx} 
-                          href={sub.href}
-                          className="block px-6 py-3 text-[10px] font-black text-white/70 hover:text-white hover:bg-white/5 transition-colors uppercase tracking-widest border-b border-white/5 last:border-0"
-                        >
-                          {sub.label}
-                        </Link>
-                      ))}
+                <div key={item.id} className="relative group/nav">
+                  <Link
+                    href={item.href}
+                    className={`relative py-1 transition-colors duration-300 ${activeSection === item.id ? 'text-[#158cca]' : 'hover:text-[#158cca]'}`}
+                  >
+                    {item.label}
+                    {activeSection === item.id && (
+                      <motion.div
+                        layoutId="activeNav"
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#158cca]"
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </Link>
+                  {item.dropdown && (
+                    <div className="absolute top-full left-0 mt-4 w-64 bg-[#0f172a] border border-white/10 shadow-2xl opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 translate-y-2 group-hover/nav:translate-y-0 z-50">
+                      <div className="py-2">
+                        {item.dropdown.map((sub, sIdx) => (
+                          <Link
+                            key={sIdx}
+                            href={sub.href}
+                            className="block px-6 py-3 text-[10px] font-black text-white/70 hover:text-white hover:bg-white/5 transition-colors uppercase tracking-widest border-b border-white/5 last:border-0"
+                          >
+                            {sub.label}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              ))}
             </nav>
 
             {/* Contact Button */}
@@ -323,7 +236,7 @@ export default function Home() {
           <div className="relative w-full h-full flex flex-col">
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between p-6 border-b border-slate-700">
-              <Image src="/Slmlogo.png" alt="San Luis Medic Logo" width={240} height={70} className="h-10 w-auto" priority />
+              <Image src="/Slmlogo.webp" alt="San Luis Medic Logo" width={240} height={70} className="h-10 w-auto" sizes="240px" priority />
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-center w-12 h-12 bg-white/10 text-white hover:bg-white/20 transition-colors"
@@ -403,9 +316,10 @@ export default function Home() {
         {/* Blurred Medical Background */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+            src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=40"
             alt="Centro Médico Background"
             fill
+            sizes="100vw"
             className="object-cover opacity-10 blur-sm"
           />
           <div className="absolute inset-0 bg-white/60" />
@@ -413,9 +327,10 @@ export default function Home() {
         {/* MTC Watermark Background */}
         <div className="absolute left-1/3 -bottom-20 w-[900px] h-[600px] opacity-[0.03] pointer-events-none z-0">
           <Image
-            src="/MTC.png"
+            src="/MTC.webp"
             alt="MTC Watermark"
             fill
+            sizes="900px"
             className="object-contain"
           />
         </div>
@@ -504,9 +419,10 @@ export default function Home() {
                 <div className="flex flex-col items-start opacity-40 hover:opacity-100 transition-opacity duration-500">
                   <div className="relative w-32 h-10">
                     <Image
-                      src="/MTC.png"
+                      src="/MTC.webp"
                       alt="Autorizado por MTC"
                       fill
+                      sizes="128px"
                       className="object-contain object-left"
                     />
                   </div>
@@ -526,11 +442,12 @@ export default function Home() {
                 {/* Decorative Elements */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#158cca]/5 rounded-full blur-[100px] -z-10" />
                 <div className="absolute top-1/4 right-0 w-32 h-32 bg-[#a3c435]/10 rounded-full blur-[50px] -z-10" />
-                
+
                 <Image
-                  src="/Doctor SLM.png"
+                  src="/Doctor SLM.webp"
                   alt="Doctora Profesional San Luis Medic"
                   fill
+                  sizes="(max-width: 1024px) 0px, 50vw"
                   className="object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.2)]"
                   priority
                 />
@@ -944,111 +861,7 @@ export default function Home() {
             <p className="text-slate-600 text-lg">Atendemos en múltiples ubicaciones estratégicas para tu comodidad</p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Left: Map Column */}
-            <div className="lg:col-span-2 h-[500px] border border-slate-100 shadow-xl relative group overflow-hidden">
-              <div ref={mapContainer} className="w-full h-full z-0" />
-            </div>
-
-            {/* Right: Info Column */}
-            <div className="flex flex-col gap-4">
-              {[
-                {
-                  name: "Sede Lima (Izaguirre)",
-                  address: "Av. Carlos Izaguirre 108, Independencia 15311",
-                  phone: "(01) 642-9971",
-                  whatsapp: "999 888 777",
-                  hours: "Lun-Sáb: 8am - 6pm",
-                  services: ["Evaluaciones completas", "Certificados MTC", "Atención prioritaria"],
-                  mapQuery: "Av. Carlos Izaguirre 108, Independencia"
-                },
-                {
-                  name: "Sede Andahuaylas",
-                  address: "Jr. Alfonso Ugarte N.º. 354 frente ex Ugel Andahuaylas",
-                  phone: "(054) 234-567",
-                  whatsapp: "944 777 666",
-                  hours: "Lun-Sáb: 9am - 6pm",
-                  services: ["Evaluaciones completas", "Zona sur", "Atención especializada"],
-                  mapQuery: "Jr. Alfonso Ugarte N.º. 354 frente ex Ugel Andahuaylas"
-                },
-                {
-                  name: "Sede Ayacucho",
-                  address: "Jr. José Santos Chocano N°410, Jesús Nazareno-Huamanga-Ayacucho",
-                  phone: "(044) 345-678",
-                  whatsapp: "944 666 555",
-                  hours: "Lun-Vie: 8am - 5pm",
-                  services: ["Evaluaciones básicas", "Zona norte", "Fácil acceso"],
-                  mapQuery: "Jr. José Santos Chocano N°410, Jesús Nazareno-Huamanga-Ayacucho"
-                }
-              ].map((sede, idx) => (
-                <motion.div
-                  key={idx}
-                  onClick={() => setSelectedSede(idx)}
-                  className={`p-4 md:p-5 cursor-pointer border transition-all duration-300 ${selectedSede === idx
-                    ? 'bg-[#0f172a] border-[#0f172a] text-white shadow-lg translate-x-2'
-                    : 'bg-white border-slate-100 text-slate-600 hover:border-[#158cca]/30'
-                    }`}
-                >
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className={`font-bold uppercase tracking-widest text-[11px] ${selectedSede === idx ? 'text-[#a3c435]' : 'text-slate-900'}`}>
-                      {sede.name}
-                    </h3>
-                    {selectedSede === idx && <div className="w-2 h-2 bg-[#a3c435] rounded-full"></div>}
-                  </div>
-
-                  {selectedSede === idx ? (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="space-y-3 mt-3"
-                    >
-                      <div className="text-xs opacity-80 flex gap-2">
-                        <MapPin size={14} className="shrink-0 mt-0.5" />
-                        <span>{sede.address}</span>
-                      </div>
-                      <div className="text-xs opacity-80 flex gap-2">
-                        <Phone size={14} className="shrink-0 mt-0.5" />
-                        <span>{sede.phone} | {sede.whatsapp}</span>
-                      </div>
-                      <div className="flex gap-2 pt-2">
-                        <a
-                          href={`https://www.google.com/maps/search/?api=1&query=${sedesCoords[idx][0]},${sedesCoords[idx][1]}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          title="Abrir en Google Maps"
-                          className="flex-1 bg-white/10 hover:bg-white/20 text-white flex items-center justify-center py-2.5 border border-white/20 transition-colors"
-                        >
-                          <SiGooglemaps size={16} />
-                        </a>
-                        <a
-                          href={`https://waze.com/ul?ll=${sedesCoords[idx][0]},${sedesCoords[idx][1]}&navigate=yes`}
-                          target="_blank"
-                          rel="noreferrer"
-                          title="Abrir en Waze"
-                          className="flex-1 bg-[#33ccff]/20 hover:bg-[#33ccff]/40 text-white flex items-center justify-center py-2.5 border border-[#33ccff]/30 transition-colors"
-                        >
-                          <SiWaze size={16} />
-                        </a>
-                        <a
-                          href={`https://wa.me/51${sede.whatsapp.replace(/\s/g, '')}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          title="Contactar por WhatsApp"
-                          className="flex-1 bg-[#25D366]/20 hover:bg-[#25D366]/40 text-white flex items-center justify-center py-2.5 border border-[#25D366]/30 transition-colors"
-                        >
-                          <FaWhatsapp size={16} />
-                        </a>
-                      </div>
-                    </motion.div>
-                  ) : (
-                    <div className="text-[9px] uppercase font-bold tracking-tight opacity-50">
-                      Ver detalles y ubicación
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          <MapSection />
         </div>
       </section>
 
@@ -1086,6 +899,8 @@ export default function Home() {
                   src="https://www.apeseg.org.pe/wp-content/uploads/2019/11/REVISION-WEB.png"
                   alt="Revisiones Técnicas"
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  loading="lazy"
                   className="object-cover transition-all duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-all duration-500 group-hover:from-black/60 group-hover:via-black/20"></div>
@@ -1132,6 +947,8 @@ export default function Home() {
                   src="https://tecdrive.es/wp-content/uploads/2023/08/cursos_porque_cursos.jpg"
                   alt="Escuela de Conductores"
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  loading="lazy"
                   className="object-cover transition-all duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-all duration-500 group-hover:from-black/60 group-hover:via-black/20"></div>
@@ -1248,13 +1065,13 @@ export default function Home() {
         <div className="absolute top-0 right-0 w-1/3 h-full bg-[#158cca]/5 -skew-x-12 translate-x-1/2 pointer-events-none" />
         <div className="absolute bottom-0 left-10 w-64 h-64 bg-[#a3c435]/5 rounded-full blur-[80px] pointer-events-none" />
         <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-[#158cca]/10 rounded-full blur-[60px] pointer-events-none" />
-        
+
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid md:grid-cols-4 gap-12 lg:gap-16 mb-16 border-b border-white/10 pb-16">
             <div className="md:col-span-2 pr-0 md:pr-12">
               <div className="bg-white/5 inline-block p-4 rounded-none mb-8 border border-white/10 relative group">
                 <div className="absolute inset-0 bg-[#158cca]/20 translate-x-2 translate-y-2 -z-10 group-hover:translate-x-1 group-hover:translate-y-1 transition-transform" />
-                <Image src="/Slmlogo.png" alt="San Luis Medic Logo" width={200} height={50} className="h-10 w-auto brightness-0 invert" />
+                <Image src="/Slmlogo.webp" alt="San Luis Medic Logo" width={200} height={50} sizes="200px" loading="lazy" className="h-10 w-auto brightness-0 invert" />
               </div>
               <p className="text-sm text-slate-400 mb-8 leading-relaxed max-w-md font-medium">
                 Corporación líder en evaluaciones médicas certificadas por el MTC para licencias de conducir. Brindamos confianza, rapidez y seguridad vial a nivel nacional con más de 15 años de experiencia.
@@ -1313,14 +1130,14 @@ export default function Home() {
               </ul>
             </div>
           </div>
-          
+
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
               © {new Date().getFullYear()} CORPORACIÓN SAN LUIS MEDIC S.A.C.
             </p>
-            <Link 
-              href="https://sparktreestudio.com/" 
-              target="_blank" 
+            <Link
+              href="https://sparktreestudio.com/"
+              target="_blank"
               className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 opacity-0 hover:opacity-100 transition-opacity duration-300 cursor-pointer"
             >
               desarrollado por: Sparktree Studio

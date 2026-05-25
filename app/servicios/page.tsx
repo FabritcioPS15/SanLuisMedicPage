@@ -58,7 +58,7 @@ export default function Servicios() {
         <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/">
-              <Image src="/Slmlogo.png" alt="San Luis Medic Logo" width={220} height={70} className="h-12 w-auto" priority />
+              <Image src="/Slmlogo.webp" alt="San Luis Medic Logo" width={220} height={70} className="h-12 w-auto" priority />
             </Link>
           </div>
 
@@ -116,7 +116,7 @@ export default function Servicios() {
           <div className="relative w-full h-full flex flex-col">
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between p-6 border-b border-slate-700">
-              <Image src="/Slmlogo.png" alt="San Luis Medic Logo" width={240} height={70} className="h-10 w-auto" priority />
+              <Image src="/Slmlogo.webp" alt="San Luis Medic Logo" width={240} height={70} className="h-10 w-auto" priority />
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-center w-12 h-12 bg-white/10 text-white hover:bg-white/20 transition-colors"
@@ -284,7 +284,7 @@ export default function Servicios() {
                 </Link>
               </div>
               <div className="absolute top-0 left-0 w-full h-full opacity-10">
-                <Image src="/MTC.png" alt="Watermark" fill className="object-contain" />
+                <Image src="/MTC.webp" alt="Watermark" fill className="object-contain" />
               </div>
             </div>
           </div>
@@ -303,7 +303,7 @@ export default function Servicios() {
             <div className="md:col-span-2 pr-0 md:pr-12">
               <div className="bg-white/5 inline-block p-4 rounded-none mb-8 border border-white/10 relative group">
                 <div className="absolute inset-0 bg-[#158cca]/20 translate-x-2 translate-y-2 -z-10 group-hover:translate-x-1 group-hover:translate-y-1 transition-transform" />
-                <Image src="/Slmlogo.png" alt="San Luis Medic Logo" width={200} height={50} className="h-10 w-auto brightness-0 invert" />
+                <Image src="/Slmlogo.webp" alt="San Luis Medic Logo" width={200} height={50} className="h-10 w-auto brightness-0 invert" />
               </div>
               <p className="text-sm text-slate-400 mb-8 leading-relaxed max-w-md font-medium">
                 Corporación líder en evaluaciones médicas certificadas por el MTC para licencias de conducir. Brindamos confianza, rapidez y seguridad vial a nivel nacional con más de 15 años de experiencia.
