@@ -49,6 +49,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  verification: {
+    google: 'EMaoov4TWOGeHLprqp5hVrOls5-h-YETOIF3cd_N6cA',
+  },
   alternates: {
     canonical: 'https://sanluismedic.pe',
   },
