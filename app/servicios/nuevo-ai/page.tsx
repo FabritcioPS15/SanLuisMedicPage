@@ -112,7 +112,7 @@ function ServiceContent() {
                   <circle cx="12" cy="8" r="6" fill="white"/>
                 </svg>
                 <div class="absolute top-[3px] left-[7px] w-[18px] h-[18px] flex items-center justify-center overflow-hidden rounded-full">
-                  <img src="/PinSLM.webp" class="w-[80%] h-auto object-contain" alt="SLM" />
+                  <img src="/PinSLM.webp" class="w-[80%] h-auto object-contain" alt="SLM" width="14" height="14" />
                 </div>
                </div>`,
         iconSize: [32, 40],

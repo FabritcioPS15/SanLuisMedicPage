@@ -18,6 +18,7 @@ const ibmPlex = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://sanluismedic.pe'),
   title: 'San Luis Medic | Examen Médico para Brevete en un día - Autorizado MTC',
   description: 'Saca tu brevete nuevo o revalida tu licencia de conducir A1 en un día. Examen médico rápido para brevetes, certificado MTC inmediato. ¡Atención rápida!',
   keywords: ['examen medico brevete', 'medico brevetes', 'licencia de conducir', 'sacar brevete nuevo', 'brevetes en un dia', 'licencia de conducir a1', 'brevete carro', 'mtc examen medico'],

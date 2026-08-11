@@ -103,7 +103,7 @@ export default function Sedes() {
                     <circle cx="12" cy="8" r="6" fill="white"/>
                   </svg>
                   <div class="absolute top-[4px] left-[10px] w-[22px] h-[22px] flex items-center justify-center overflow-hidden rounded-full">
-                    <img src="/PinSLM.webp" class="w-[80%] h-auto object-contain" alt="SLM" />
+                    <img src="/PinSLM.webp" class="w-[80%] h-auto object-contain" alt="SLM" width="18" height="18" />
                   </div>
                  </div>`,
           iconSize: [42, 54],

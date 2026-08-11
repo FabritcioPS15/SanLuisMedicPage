@@ -1,0 +1,43 @@
+# San Luis Medic
+
+> Centro de exámenes médicos autorizado y homologado por el MTC para licencias de conducir en Perú. Más de 15 años de experiencia. Resultados en el día.
+
+## Pages
+
+- [Inicio](https://sanluismedic.pe/): Examen médico para brevete en un día, autorizado por el MTC. Precios web y promociones.
+- [Servicios](https://sanluismedic.pe/servicios/): Licencia nueva (A1), revalidación, recategorización y licencia de moto.
+- [Licencia Particular A1](https://sanluismedic.pe/servicios/licencia-particular/): Primera licencia de conducir particular. Precio web S/ 150 (regular S/ 180).
+- [Revalidación](https://sanluismedic.pe/servicios/revalidacion/): Renovación de licencia vencida. Precio web S/ 120 (regular S/ 150).
+- [Recategorización](https://sanluismedic.pe/servicios/recategorizacion/): Sube de categoría. Precio web S/ 180 (regular S/ 220).
+- [Licencia de Moto B-II](https://sanluismedic.pe/servicios/licencia-moto/): Evaluación para vehículos menores. Precio web S/ 100 (regular S/ 150).
+- [Nuestras Sedes](https://sanluismedic.pe/sedes/): Lima (Independencia), Andahuaylas y Ayacucho.
+- [Nosotros](https://sanluismedic.pe/nosotros/): Sobre la corporación San Luis Medic.
+- [Contacto](https://sanluismedic.pe/contacto/): Reserva tu cita por WhatsApp o teléfono.
+
+## Data
+
+### Servicios y precios web (por sede)
+
+- Licencia Particular (A1): S/ 150 (Lima), S/ 130 (Andahuaylas), S/ 140 (Ayacucho). Incluye examen psicológico, visual/auditivo, médico general y registro biométrico.
+- Revalidación: S/ 150 (Lima), S/ 130 (Andahuaylas), S/ 140 (Ayacucho). Incluye actualización MTC, evaluación visual, médica breve y firma biométrica.
+- Recategorización: S/ 180 (Lima), S/ 160 (Andahuaylas), S/ 170 (Ayacucho). Incluye evaluación completa, pruebas avanzadas, psicotécnico y certificación MTC.
+- Licencia de Moto (B-II): S/ 120 (Lima), S/ 100 (Andahuaylas), S/ 110 (Ayacucho). Incluye examen médico, evaluación visual, psicológico básico y carga al sistema.
+
+### Sedes
+
+- Sede Lima (Izaguirre): Av. Carlos Izaguirre 108, Independencia. Tel: (01) 642-9971. WhatsApp: 999 888 777. Lun-Sáb 8am-6pm.
+- Sede Andahuaylas: Jr. Alfonso Ugarte N.º 354 (frente ex Ugel). Tel: (054) 234-567. WhatsApp: 944 777 666. Lun-Sáb 9am-6pm.
+- Sede Ayacucho: Jr. José Santos Chocano N°410, Jesús Nazareno-Huamanga. Tel: (044) 345-678. WhatsApp: 944 666 555. Lun-Vie 8am-5pm.
+
+### Contacto
+
+- Teléfono central: (01) 642-9971
+- WhatsApp: +51 999 888 777
+- Email: info@sanluismedic.pe
+- Web: https://sanluismedic.pe
+
+### Preguntas frecuentes
+
+- ¿Cuánto tiempo demora el examen médico? El proceso completo suele tomar entre 45 a 60 minutos, dependiendo de la categoría.
+- ¿Qué documentos debo llevar? Solo necesitas tu DNI vigente (físico o electrónico) y tu licencia anterior si es revalidación.
+- ¿Tienen convenio con el MTC? Sí, somos un centro médico autorizado y homologado por el MTC con código vigente.

@@ -28,6 +28,7 @@ const MapSection = dynamic(() => import('@/components/map-section'), {
 })
 
 
+
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [counters, setCounters] = useState({ years: 0, clients: 0, branches: 0 })
@@ -37,6 +38,17 @@ export default function Home() {
   const [pricingSede, setPricingSede] = useState(0)
   const [activeSection, setActiveSection] = useState('inicio')
   const [activeCard, setActiveCard] = useState<number | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Detect mobile device for conditional loading
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const sedes = [
     { name: 'Sede Lima (Izaguirre)', whatsapp: '999888777', phone: '(01) 642-9971', address: 'Av. Carlos Izaguirre 108, Independencia' },
@@ -52,7 +64,7 @@ export default function Home() {
     setIsLoaded(true)
   }, [])
 
-  // Counter animation effect
+  // Counter animation effect - simplified for mobile
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -79,8 +91,8 @@ export default function Home() {
   }, [countersStarted])
 
   const animateCounters = () => {
-    const duration = 2000 // 2 seconds
-    const steps = 60
+    const duration = isMobile ? 1000 : 2000 // Faster animation on mobile
+    const steps = isMobile ? 30 : 60
     const stepDuration = duration / steps
 
     let currentStep = 0
@@ -105,7 +117,7 @@ export default function Home() {
 
   const fadeIn: Variants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: isMobile ? 0.3 : 0.6, ease: "easeOut" } }
   }
 
   const staggerContainer: Variants = {
@@ -113,7 +125,7 @@ export default function Home() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: isMobile ? 0.05 : 0.1
       }
     }
   }
@@ -125,6 +137,7 @@ export default function Home() {
         href="https://wa.me/51999999999"
         target="_blank"
         rel="noreferrer"
+        aria-label="Contactar por WhatsApp"
         className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl shadow-green-500/30 flex items-center justify-center hover:bg-[#20bd5a] transition-colors"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -132,7 +145,7 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1 }}
       >
-        <FaWhatsapp size={32} />
+        <FaWhatsapp size={32} aria-hidden="true" />
       </motion.a>
 
       <Navbar active={activeSection} home />
@@ -140,26 +153,29 @@ export default function Home() {
       {/* Section 1: Hero */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-white">
         {/* Blurred Medical Background */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0" aria-hidden="true">
           <Image
-            src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=40"
-            alt="Centro Médico Background"
+            src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=40"
+            alt=""
             fill
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover opacity-10 blur-sm"
+            priority={isMobile}
           />
           <div className="absolute inset-0 bg-white/60" />
         </div>
-        {/* MTC Watermark Background */}
-        <div className="absolute left-1/3 -bottom-20 w-[900px] h-[600px] opacity-[0.03] pointer-events-none z-0">
-          <Image
-            src="/MTC.webp"
-            alt="MTC Watermark"
-            fill
-            sizes="900px"
-            className="object-contain"
-          />
-        </div>
+        {/* MTC Watermark Background - Desktop Only */}
+        {!isMobile && (
+          <div className="absolute left-1/3 -bottom-20 w-[900px] h-[600px] opacity-[0.03] pointer-events-none z-0 hidden lg:block" aria-hidden="true">
+            <Image
+              src="/MTC.webp"
+              alt=""
+              fill
+              sizes="900px"
+              className="object-contain"
+            />
+          </div>
+        )}
 
         <div className="max-w-7xl mx-auto px-4 w-full relative z-10 pt-12 pb-16">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -169,10 +185,10 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <div className="flex items-center gap-2 mb-4">
-                <span className="w-10 h-0.5 bg-[#a3c435]"></span>
-                <span className="text-slate-600 text-sm font-bold tracking-wide italic">¡Reserva Ahora tu Cita para el Examen Médico!</span>
-              </div>
+              <p className="text-slate-600 text-sm font-bold tracking-wide italic mb-4">
+                <span className="inline-block w-10 h-0.5 bg-[#a3c435] mr-2" aria-hidden="true"></span>
+                ¡Reserva Ahora tu Cita para el Examen Médico!
+              </p>
 
               <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#0f172a] leading-tight mb-6">
                 Examen Médico <br />
@@ -199,7 +215,7 @@ export default function Home() {
                   "Paga con Tarjeta de Débito o Crédito"
                 ].map((item, idx) => (
                   <li key={idx} className="flex items-center gap-3 text-slate-700 font-bold italic text-[13px] leading-tight">
-                    <div className="w-1.5 h-1.5 bg-[#158cca] rounded-full shrink-0" />
+                    <span className="w-1.5 h-1.5 bg-[#158cca] rounded-full shrink-0" aria-hidden="true" />
                     {item}
                   </li>
                 ))}
@@ -209,16 +225,19 @@ export default function Home() {
                 <div className="relative">
                   <Button
                     onClick={() => setIsHeroDropdownOpen(!isHeroDropdownOpen)}
+                    aria-expanded={isHeroDropdownOpen}
+                    aria-haspopup="true"
                     className="bg-[#158cca] hover:bg-[#0f172a] text-white font-black px-10 h-14 rounded-none text-sm uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all flex items-center gap-3 w-full sm:w-auto"
                   >
                     <span>Reservar Cita Ahora</span>
-                    <ChevronDown size={20} className={`transition-transform duration-300 ${isHeroDropdownOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={20} className={`transition-transform duration-300 ${isHeroDropdownOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
                   </Button>
 
                   {isHeroDropdownOpen && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
+                      role="menu"
                       className="absolute top-full left-0 mt-3 w-72 bg-white border border-slate-100 shadow-2xl z-[100] p-2"
                     >
                       {sedes.map((sede, index) => (
@@ -227,11 +246,12 @@ export default function Home() {
                           href={getWhatsAppUrl(`Hola San Luis Medic, quiero reservar una cita en la sede ${sede.name}`, sede.whatsapp)}
                           target="_blank"
                           rel="noreferrer"
+                          role="menuitem"
                           className="flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors group"
                         >
-                          <div className="w-10 h-10 rounded-none bg-slate-100 flex items-center justify-center text-[#158cca] group-hover:bg-[#158cca] group-hover:text-white transition-colors">
+                          <span className="w-10 h-10 rounded-none bg-slate-100 flex items-center justify-center text-[#158cca] group-hover:bg-[#158cca] group-hover:text-white transition-colors" aria-hidden="true">
                             <MapPin size={18} />
-                          </div>
+                          </span>
                           <div>
                             <div className="font-bold text-slate-900 text-sm uppercase tracking-tighter">{sede.name}</div>
                             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Agendar vía WhatsApp</div>
@@ -246,32 +266,32 @@ export default function Home() {
                   <div className="relative w-32 h-10">
                     <Image
                       src="/MTC.webp"
-                      alt="Autorizado por MTC"
+                      alt="Autorizado por Ministerio de Transportes y Comunicaciones MTC"
                       fill
                       sizes="128px"
                       className="object-contain object-left"
                     />
                   </div>
-
                 </div>
               </div>
             </motion.div>
 
-            {/* Right Image */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="relative hidden lg:block h-[700px]"
-            >
+            {/* Right Image - Desktop Only */}
+            {!isMobile && (
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="relative hidden lg:block h-[700px]"
+              >
               <div className="relative h-full w-full flex items-end">
                 {/* Decorative Elements */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#158cca]/5 rounded-full blur-[100px] -z-10" />
-                <div className="absolute top-1/4 right-0 w-32 h-32 bg-[#a3c435]/10 rounded-full blur-[50px] -z-10" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#158cca]/5 rounded-full blur-[100px] -z-10" aria-hidden="true" />
+                <div className="absolute top-1/4 right-0 w-32 h-32 bg-[#a3c435]/10 rounded-full blur-[50px] -z-10" aria-hidden="true" />
 
                 <Image
                   src="/Doctor SLM.webp"
-                  alt="Doctora Profesional San Luis Medic"
+                  alt="Doctora profesional realizando examen médico"
                   fill
                   sizes="(max-width: 1024px) 0px, 50vw"
                   className="object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.2)]"
@@ -283,11 +303,12 @@ export default function Home() {
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                   className="absolute bottom-20 -left-10 bg-white p-5 shadow-2xl border border-slate-50 z-20 hidden xl:block"
+                  aria-live="polite"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-[#a3c435] flex items-center justify-center text-white">
+                    <span className="w-12 h-12 bg-[#a3c435] flex items-center justify-center text-white" aria-hidden="true">
                       <Clock size={24} />
-                    </div>
+                    </span>
                     <div>
                       <div className="text-xl font-black text-[#0f172a]">2.5 Horas</div>
                       <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Resultados Garantizados</div>
@@ -296,6 +317,7 @@ export default function Home() {
                 </motion.div>
               </div>
             </motion.div>
+            )}
           </div>
         </div>
       </section>
@@ -310,32 +332,32 @@ export default function Home() {
             variants={fadeIn}
             className="text-center max-w-3xl mx-auto mb-20"
           >
-            <div className="text-xs text-[#a3c435] font-bold mb-3 uppercase tracking-widest flex items-center gap-2 justify-center">
-              <span className="w-6 h-px bg-[#a3c435]"></span>
+            <p className="text-xs text-[#a3c435] font-bold mb-3 uppercase tracking-widest flex items-center gap-2 justify-center">
+              <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
               CONÓCENOS
-              <span className="w-6 h-px bg-[#a3c435]"></span>
-            </div>
+              <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
+            </p>
             <h2 className="font-heading text-4xl font-extrabold text-[#0f172a] mb-6">Corporación San Luis Medic</h2>
             <p className="text-slate-600 text-lg">Más de 15 años liderando evaluaciones médicas para conductores en el Perú, con cobertura nacional y compromiso con la seguridad vial.</p>
           </motion.div>
 
-          <div id="stats-section" className="grid md:grid-cols-3 gap-8 mb-16">
+          <div id="stats-section" className="grid md:grid-cols-3 gap-8 mb-16" aria-live="polite" aria-atomic="true">
             <div className="text-center">
-              <div className="text-4xl font-bold text-[#158cca] mb-2">
+              <p className="text-4xl font-bold text-[#158cca] mb-2">
                 {counters.years}+
-              </div>
+              </p>
               <p className="text-sm text-slate-600">Años de experiencia</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-[#158cca] mb-2">
+              <p className="text-4xl font-bold text-[#158cca] mb-2">
                 {counters.clients}K+
-              </div>
+              </p>
               <p className="text-sm text-slate-600">Conductores certificados</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-[#158cca] mb-2">
+              <p className="text-4xl font-bold text-[#158cca] mb-2">
                 {counters.branches}
-              </div>
+              </p>
               <p className="text-sm text-slate-600">Sedes a nivel nacional</p>
             </div>
           </div>
@@ -351,24 +373,24 @@ export default function Home() {
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-[#a3c435] rounded-full"></div>
+                  <span className="w-2 h-2 bg-[#a3c435] rounded-full" aria-hidden="true"></span>
                   <span className="text-slate-700">Cobertura nacional</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-[#a3c435] rounded-full"></div>
+                  <span className="w-2 h-2 bg-[#a3c435] rounded-full" aria-hidden="true"></span>
                   <span className="text-slate-700">Tecnología médica avanzada</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-[#a3c435] rounded-full"></div>
+                  <span className="w-2 h-2 bg-[#a3c435] rounded-full" aria-hidden="true"></span>
                   <span className="text-slate-700">Personal altamente calificado</span>
                 </li>
               </ul>
             </div>
-            <div className="relative h-96 bg-slate-100 overflow-hidden border-l-4 border-[#158cca]">
+            <div className="relative h-96 bg-slate-100 overflow-hidden border-l-4 border-[#158cca]" aria-hidden="true">
               <div className="absolute inset-0 bg-gradient-to-br from-[#158cca]/10 to-[#a3c435]/10 flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-24 h-24 bg-white flex items-center justify-center mx-auto mb-4 shadow-xl border border-slate-100">
-                    <Stethoscope size={48} className="text-[#158cca]" />
+                    <Stethoscope size={48} className="text-[#158cca]" aria-hidden="true" />
                   </div>
                   <p className="text-slate-900 font-black uppercase tracking-widest text-sm">Excelencia Nacional</p>
                 </div>
@@ -388,10 +410,10 @@ export default function Home() {
             variants={fadeIn}
             className="mb-16"
           >
-            <div className="flex items-center gap-2 mb-4">
-              <span className="w-8 h-0.5 bg-[#a3c435]"></span>
-              <span className="text-[#a3c435] text-xs font-bold uppercase tracking-widest">EXAMEN MÉDICO DE APTITUD</span>
-            </div>
+            <p className="flex items-center gap-2 mb-4 text-[#a3c435] text-xs font-bold uppercase tracking-widest">
+              <span className="w-8 h-0.5 bg-[#a3c435]" aria-hidden="true"></span>
+              EXAMEN MÉDICO DE APTITUD
+            </p>
             <h3 className="font-heading text-4xl font-extrabold text-[#0f172a] mb-6">Proceso de Evaluación MTC</h3>
             <p className="text-slate-500 text-base max-w-3xl leading-relaxed">
               Nuestras evaluaciones cumplen estrictamente con la Directiva N° 001-2023-MTC/18, garantizando un perfil de conductor apto y seguro.
@@ -436,7 +458,7 @@ export default function Home() {
                 key={idx}
                 className={`bg-white p-8 flex flex-col items-start text-left border-slate-100 ${idx !== 4 ? 'lg:border-r' : ''} ${idx < 3 ? 'md:border-r' : ''} border-b lg:border-b-0`}
               >
-                <div className="w-10 h-10 bg-blue-50 rounded-none flex items-center justify-center mb-6">
+                <div className="w-10 h-10 bg-blue-50 rounded-none flex items-center justify-center mb-6" aria-hidden="true">
                   {step.icon}
                 </div>
                 <h4 className="text-sm font-black text-[#0f172a] mb-6">
@@ -445,7 +467,7 @@ export default function Home() {
                 <ul className="space-y-3">
                   {step.details.map((detail, dIdx) => (
                     <li key={dIdx} className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-[#a3c435] rounded-full flex-shrink-0"></div>
+                      <span className="w-1.5 h-1.5 bg-[#a3c435] rounded-full flex-shrink-0" aria-hidden="true"></span>
                       <span className="text-sm text-slate-500 font-medium">{detail}</span>
                     </li>
                   ))}
@@ -462,9 +484,9 @@ export default function Home() {
               viewport={{ once: true }}
               className="bg-[#0f172a] p-10 rounded-none flex items-center gap-8 shadow-xl"
             >
-              <div className="w-14 h-14 bg-[#a3c435] rounded-none flex items-center justify-center flex-shrink-0">
+              <span className="w-14 h-14 bg-[#a3c435] rounded-none flex items-center justify-center flex-shrink-0" aria-hidden="true">
                 <Check size={28} className="text-[#0f172a]" strokeWidth={3} />
-              </div>
+              </span>
               <div>
                 <h4 className="text-xl font-bold text-white mb-3">Resultado: Aprobado</h4>
                 <p className="text-slate-400 text-sm leading-relaxed">
@@ -480,9 +502,9 @@ export default function Home() {
               viewport={{ once: true }}
               className="bg-white p-10 rounded-none border border-slate-100 flex items-center gap-8 shadow-sm"
             >
-              <div className="w-14 h-14 bg-blue-50 rounded-none flex items-center justify-center flex-shrink-0">
+              <span className="w-14 h-14 bg-blue-50 rounded-none flex items-center justify-center flex-shrink-0" aria-hidden="true">
                 <AlertCircle size={24} className="text-[#158cca]" />
-              </div>
+              </span>
               <div>
                 <h4 className="text-xl font-bold text-[#0f172a] mb-3">Resultado: Observado</h4>
                 <p className="text-slate-500 text-sm leading-relaxed">
@@ -504,11 +526,11 @@ export default function Home() {
             variants={fadeIn}
             className="text-center max-w-2xl mx-auto mb-16"
           >
-            <div className="text-xs text-[#a3c435] font-bold mb-3 uppercase tracking-widest flex items-center gap-2 justify-center">
-              <span className="w-6 h-px bg-[#a3c435]"></span>
+            <p className="text-xs text-[#a3c435] font-bold mb-3 uppercase tracking-widest flex items-center gap-2 justify-center">
+              <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
               Tarifario Claro
-              <span className="w-6 h-px bg-[#a3c435]"></span>
-            </div>
+              <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
+            </p>
             <h3 className="font-heading text-4xl font-extrabold text-[#0f172a] mb-6">Elige el servicio que necesitas</h3>
             <p className="text-slate-600 text-lg">Precios transparentes sin costos ocultos. Incluyen todo lo necesario para tu trámite en el MTC.</p>
           </motion.div>
@@ -523,16 +545,19 @@ export default function Home() {
             <div className="relative w-full max-w-md">
               <button
                 onClick={() => setIsPricingDropdownOpen(!isPricingDropdownOpen)}
+                aria-expanded={isPricingDropdownOpen}
+                aria-haspopup="listbox"
                 className="w-full px-8 py-4 font-bold transition-all duration-300 border-2 bg-white border-slate-100 text-slate-700 hover:border-[#158cca]/30 flex items-center justify-between"
               >
                 <span>{pricingSede === null ? 'Selecciona tu sede' : sedes[pricingSede].name}</span>
-                <ChevronDown size={20} className={`transition-transform duration-300 ${isPricingDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={20} className={`transition-transform duration-300 ${isPricingDropdownOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
               </button>
 
               {isPricingDropdownOpen && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
+                  role="listbox"
                   className="absolute top-full left-0 mt-2 w-full bg-white border border-slate-100 shadow-2xl z-50"
                 >
                   {sedes.map((sede, idx) => (
@@ -542,6 +567,8 @@ export default function Home() {
                         setPricingSede(idx)
                         setIsPricingDropdownOpen(false)
                       }}
+                      role="option"
+                      aria-selected={pricingSede === idx}
                       className={`w-full px-8 py-4 font-bold transition-all duration-300 text-left hover:bg-slate-50 ${pricingSede === idx ? 'bg-[#158cca]/10 text-[#158cca]' : 'text-slate-700'}`}
                     >
                       {sede.name}
@@ -563,7 +590,7 @@ export default function Home() {
               {
                 title: "Nuevo A I",
                 subtitle: "Primera licencia",
-                image: "https://images.unsplash.com/photo-1580281657527-47f249e8f4df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                image: "https://images.unsplash.com/photo-1580281657527-47f249e8f4df?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60",
                 features: ["Examen Psicológico", "Examen Visual y Auditivo", "Médico General", "Registro Biométrico"],
                 prices: [
                   { regular: 180, web: 150 }, // Lima
@@ -574,7 +601,7 @@ export default function Home() {
               {
                 title: "Revalidación",
                 subtitle: "Renueva tu licencia",
-                image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60",
                 features: ["Actualización MTC", "Evaluación Visual", "Médica Breve", "Firma Biométrica"],
                 prices: [
                   { regular: 180, web: 150 }, // Lima
@@ -585,7 +612,7 @@ export default function Home() {
               {
                 title: "Recategorización",
                 subtitle: "Sube de categoría",
-                image: "https://images.unsplash.com/photo-1551076805-e1869033e561?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                image: "https://images.unsplash.com/photo-1551076805-e1869033e561?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60",
                 features: ["Evaluación completa", "Pruebas avanzadas", "Psicotécnico", "Certificación MTC"],
                 prices: [
                   { regular: 220, web: 180 }, // Lima
@@ -596,7 +623,7 @@ export default function Home() {
               {
                 title: "Licencia Moto",
                 subtitle: "Categoría B-II",
-                image: "https://images.unsplash.com/photo-1558981403-c5f91cbba527?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                image: "https://images.unsplash.com/photo-1558981403-c5f91cbba527?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60",
                 features: ["Examen Médico Moto", "Evaluación Visual", "Psicológico Básico", "Carga al Sistema"],
                 prices: [
                   { regular: 150, web: 120 }, // Lima
@@ -628,6 +655,8 @@ export default function Home() {
                     src={item.image}
                     alt={item.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    loading="lazy"
                     className={`object-cover transition-transform duration-700 ${activeCard === idx ? 'scale-110' : 'group-hover:scale-110'}`}
                   />
                   <div className="absolute inset-0 bg-[#0f172a]/80"></div>
@@ -655,7 +684,7 @@ export default function Home() {
                     <ul className="space-y-3 mb-8">
                       {item.features.map((feature, fIdx) => (
                         <li key={fIdx} className="flex items-center gap-2 text-white/80 text-sm">
-                          <Check size={14} className="text-[#a3c435]" />
+                          <Check size={14} className="text-[#a3c435]" aria-hidden="true" />
                           {feature}
                         </li>
                       ))}
@@ -680,7 +709,7 @@ export default function Home() {
                 </div>
 
                 {/* Decorative Growing Bar */}
-                <div className={`absolute bottom-0 left-0 w-full bg-[#a3c435] transition-all duration-500 opacity-50 ${activeCard === idx ? 'h-2' : 'h-0 group-hover:h-2'}`}></div>
+                <div className={`absolute bottom-0 left-0 w-full bg-[#a3c435] transition-all duration-500 opacity-50 ${activeCard === idx ? 'h-2' : 'h-0 group-hover:h-2'}`} aria-hidden="true"></div>
               </motion.div>
             ))}
           </motion.div>
@@ -697,11 +726,11 @@ export default function Home() {
             variants={fadeIn}
             className="text-center max-w-2xl mx-auto mb-20"
           >
-            <div className="text-xs text-[#a3c435] font-bold mb-3 uppercase tracking-widest flex items-center gap-2 justify-center">
-              <span className="w-6 h-px bg-[#a3c435]"></span>
+            <p className="text-xs text-[#a3c435] font-bold mb-3 uppercase tracking-widest flex items-center gap-2 justify-center">
+              <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
               UBICACIONES
-              <span className="w-6 h-px bg-[#a3c435]"></span>
-            </div>
+              <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
+            </p>
             <h2 className="font-heading text-4xl font-extrabold text-[#0f172a] mb-6">Nuestras Sedes</h2>
             <p className="text-slate-600 text-lg">Atendemos en múltiples ubicaciones estratégicas para tu comodidad</p>
           </motion.div>
@@ -720,10 +749,10 @@ export default function Home() {
               viewport={{ once: true, margin: "-100px" }}
               variants={fadeIn}
             >
-              <div className="text-xs text-[#a3c435] font-bold mb-2 uppercase tracking-widest flex items-center gap-2">
-                <span className="w-6 h-px bg-[#a3c435]"></span>
+              <p className="text-xs text-[#a3c435] font-bold mb-2 uppercase tracking-widest flex items-center gap-2">
+                <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
                 GRUPO SAN LUIS
-              </div>
+              </p>
               <h2 className="font-heading text-4xl font-extrabold text-[#0f172a] mb-12">Unidades de Negocio</h2>
             </motion.div>
           </div>
@@ -733,15 +762,15 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              whileHover={{ y: -10 }}
+              transition={{ duration: isMobile ? 0.3 : 0.6 }}
+              whileHover={!isMobile ? { y: -10 } : {}}
               className="relative h-[500px] overflow-hidden group cursor-pointer"
               onClick={() => window.open('https://revisiones-tecnicas.com', '_blank')}
             >
               {/* Background Image */}
               <div className="absolute inset-0">
                 <Image
-                  src="https://www.apeseg.org.pe/wp-content/uploads/2019/11/REVISION-WEB.png"
+                  src="/revisiones-tecnicas.webp"
                   alt="Revisiones Técnicas"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -756,11 +785,11 @@ export default function Home() {
                 <div className="text-center px-8">
                   <h3 className="text-3xl md:text-4xl font-black text-white mb-4">Revisiones Técnicas</h3>
                   <p className="text-white/90 text-sm mb-6 max-w-md">Inspección vehicular completa para garantizar la seguridad y cumplimiento de normativas.</p>
-                  <div className="flex flex-col space-y-2 text-white/80 text-sm">
-                    <div className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" /> Certificación MTC</div>
-                    <div className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" /> Inspección 360°</div>
-                    <div className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" /> Resultados inmediatos</div>
-                  </div>
+                  <ul className="flex flex-col space-y-2 text-white/80 text-sm">
+                    <li className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" aria-hidden="true" /> Certificación MTC</li>
+                    <li className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" aria-hidden="true" /> Inspección 360°</li>
+                    <li className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" aria-hidden="true" /> Resultados inmediatos</li>
+                  </ul>
                   <div className="mt-6">
                     <Button className="bg-white text-black hover:bg-gray-100 px-8 py-3 rounded-none text-xs font-black uppercase tracking-widest">
                       Visitar sitio →
@@ -781,15 +810,15 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              whileHover={{ y: -10 }}
+              transition={{ duration: isMobile ? 0.3 : 0.6, delay: isMobile ? 0 : 0.1 }}
+              whileHover={!isMobile ? { y: -10 } : {}}
               className="relative h-[500px] overflow-hidden group cursor-pointer"
               onClick={() => window.open('https://escuela-conductores.com', '_blank')}
             >
               {/* Background Image */}
               <div className="absolute inset-0">
                 <Image
-                  src="https://tecdrive.es/wp-content/uploads/2023/08/cursos_porque_cursos.jpg"
+                  src="/escuela-conductores.webp"
                   alt="Escuela de Conductores"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -804,11 +833,11 @@ export default function Home() {
                 <div className="text-center px-8">
                   <h3 className="text-3xl md:text-4xl font-black text-white mb-4">Escuela de Conductores</h3>
                   <p className="text-white/90 text-sm mb-6 max-w-md">Formación integral para conductores responsables y seguros en las vías.</p>
-                  <div className="flex flex-col space-y-2 text-white/80 text-sm">
-                    <div className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" /> Clases teóricas y prácticas</div>
-                    <div className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" /> Simuladores de conducción</div>
-                    <div className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" /> Examen final garantizado</div>
-                  </div>
+                  <ul className="flex flex-col space-y-2 text-white/80 text-sm">
+                    <li className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" aria-hidden="true" /> Clases teóricas y prácticas</li>
+                    <li className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" aria-hidden="true" /> Simuladores de conducción</li>
+                    <li className="flex items-center justify-center gap-2"><Check size={16} className="text-green-400" aria-hidden="true" /> Examen final garantizado</li>
+                  </ul>
                   <div className="mt-6">
                     <Button className="bg-white text-black hover:bg-gray-100 px-8 py-3 rounded-none text-xs font-black uppercase tracking-widest">
                       Visitar sitio →
@@ -838,11 +867,11 @@ export default function Home() {
             variants={fadeIn}
             className="text-center max-w-2xl mx-auto mb-20"
           >
-            <div className="text-xs text-[#a3c435] font-bold mb-3 uppercase tracking-widest flex items-center gap-2 justify-center">
-              <span className="w-6 h-px bg-[#a3c435]"></span>
+            <p className="text-xs text-[#a3c435] font-bold mb-3 uppercase tracking-widest flex items-center gap-2 justify-center">
+              <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
               EXPERIENCIAS
-              <span className="w-6 h-px bg-[#a3c435]"></span>
-            </div>
+              <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
+            </p>
             <h2 className="font-heading text-4xl font-extrabold text-[#0f172a] mb-6">Opiniones de Conductores</h2>
             <p className="text-slate-600 text-lg">Cientos de conductores confían en nosotros cada mes</p>
           </motion.div>
@@ -853,15 +882,17 @@ export default function Home() {
               { name: "Ana María Soto", text: "Muy profesionales. Me explicaron cada paso del examen y el personal fue muy amable.", rating: 5 },
               { name: "Jorge Luis Paico", text: "La mejor opción para renovar el brevete. Sin colas innecesarias y todo digital.", rating: 5 }
             ].map((testimony, idx) => (
-              <div key={idx} className="bg-white p-8 border border-slate-100 shadow-sm relative">
-                <div className="flex gap-1 mb-4">
+              <article key={idx} className="bg-white p-8 border border-slate-100 shadow-sm relative">
+                <div className="flex gap-1 mb-4" aria-label={`Calificación de ${testimony.rating} de 5 estrellas`}>
                   {[...Array(testimony.rating)].map((_, i) => (
-                    <Star key={i} size={16} className="fill-yellow-400 text-yellow-400" />
+                    <Star key={i} size={16} className="fill-yellow-400 text-yellow-400" aria-hidden="true" />
                   ))}
                 </div>
-                <p className="text-slate-600 italic mb-6 leading-relaxed">"{testimony.text}"</p>
+                <blockquote className="text-slate-600 italic mb-6 leading-relaxed">
+                  <p>"{testimony.text}"</p>
+                </blockquote>
                 <p className="font-bold text-[#0f172a] uppercase tracking-wider text-xs">— {testimony.name}</p>
-              </div>
+              </article>
             ))}
           </div>
         </div>
@@ -877,11 +908,11 @@ export default function Home() {
             variants={fadeIn}
             className="text-center mb-16"
           >
-            <div className="text-xs text-[#a3c435] font-bold mb-3 uppercase tracking-widest flex items-center gap-2 justify-center">
-              <span className="w-6 h-px bg-[#a3c435]"></span>
+            <p className="text-xs text-[#a3c435] font-bold mb-3 uppercase tracking-widest flex items-center gap-2 justify-center">
+              <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
               DUDAS
-              <span className="w-6 h-px bg-[#a3c435]"></span>
-            </div>
+              <span className="w-6 h-px bg-[#a3c435]" aria-hidden="true"></span>
+            </p>
             <h2 className="font-heading text-4xl font-extrabold text-[#0f172a] mb-6">Preguntas Frecuentes</h2>
           </motion.div>
 
@@ -905,6 +936,42 @@ export default function Home() {
       </section>
 
       <Footer />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "¿Cuánto tiempo demora el examen médico?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "El proceso completo suele tomar entre 45 a 60 minutos, dependiendo de la categoría."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "¿Qué documentos debo llevar?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Solo necesitas tu DNI vigente (físico o electrónico) y tu licencia anterior si es revalidación."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "¿Tienen convenio con el MTC?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Sí, somos un centro médico autorizado y homologado por el MTC con código vigente."
+                }
+              }
+            ]
+          })
+        }}
+      />
     </div>
   )
 }
