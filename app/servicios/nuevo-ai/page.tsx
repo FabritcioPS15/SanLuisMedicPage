@@ -111,8 +111,8 @@ function ServiceContent() {
                   <path d="M12 0C7.58 0 4 3.58 4 8C4 13.54 12 22 12 22C12 22 20 13.54 20 8C20 3.58 16.42 0 12 0Z" fill="#158cca"/>
                   <circle cx="12" cy="8" r="6" fill="white"/>
                 </svg>
-                <div className="absolute top-[3px] left-[7px] w-[18px] h-[18px] flex items-center justify-center overflow-hidden rounded-full">
-                  <img src="/PinSLM.webp" className="w-[80%] h-auto object-contain" alt="SLM" />
+                <div class="absolute top-[3px] left-[7px] w-[18px] h-[18px] flex items-center justify-center overflow-hidden rounded-full">
+                  <img src="/PinSLM.webp" class="w-[80%] h-auto object-contain" alt="SLM" />
                 </div>
                </div>`,
         iconSize: [32, 40],

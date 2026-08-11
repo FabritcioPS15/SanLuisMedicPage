@@ -1,6 +1,6 @@
 :HL["/_next/static/chunks/0qlzuqe-resn4.css","style"]
-:HL["/_next/static/chunks/015y8nce2312e.css","style"]
+:HL["/_next/static/chunks/0wkdrd4sa~twr.css","style"]
 :HL["/_next/static/media/03fc1b4a8d284b5e-s.p.09.f.n_ccld80.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/_next/static/media/a626ed2fbe2db1bf-s.p.0_bmx_ioij-un.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/_next/static/media/aae5f0be330e13db-s.p.09~kfcksvwt3b.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"servicios","param":null,"prefetchHints":0,"slots":{"children":{"name":"licencia-moto","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"_JwfPjD-Xv6sD780BH9rI"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"servicios","param":null,"prefetchHints":0,"slots":{"children":{"name":"licencia-moto","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"Qbx5m3xXIlAQ8uOvqKiis"}

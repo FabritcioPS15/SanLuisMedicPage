@@ -65,6 +65,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${arimo.variable} ${exo2.variable} ${ibmPlex.variable} scroll-smooth`}>
+      <head>
+        <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
+      </head>
       <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

@@ -27,8 +27,10 @@ export function TopHeader() {
             alt="MTC Banner"
             width={400}
             height={30}
+            sizes="400px"
+            loading="lazy"
+            decoding="async"
             className="h-8 w-auto object-contain"
-            priority
           />
         </div>
 
